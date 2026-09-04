@@ -26,12 +26,9 @@
     .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-weight: 600; color: #4b5563; cursor: pointer; }
     .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
 
-    .note { font-size: 11px; color: #6b7280; margin-top: 5px; font-weight: 500; }
-
     .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 18px; text-align: center; margin-top: 16px; }
     .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
     .res-main { font-size: 34px; font-weight: 800; margin-top: 2px; }
-    .res-sub { font-size: 12px; opacity: 0.95; font-weight: 600; margin-top: 2px; }
 
     .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:active { opacity: 0.9; }
@@ -59,7 +56,6 @@
       <span class="chip" onclick="setTasa(20, this)">20%</span>
       <span class="chip" onclick="setTasa(22, this)">22%</span>
     </div>
-    <div class="note">🛡️ Se incluye +2% anual de seguro de desgravamen</div>
   </div>
 
   <div class="field">
@@ -72,9 +68,8 @@
   </div>
 
   <div class="res-box">
-    <div class="res-title">Cuota Total Mensual</div>
+    <div class="res-title">Cuota Mensual</div>
     <div class="res-main" id="resBs">Bs 0</div>
-    <div class="res-sub">(Incluye seguro de desgravamen)</div>
   </div>
 
   <button class="btn" onclick="copiar()">📲 Copiar para WhatsApp</button>
@@ -105,7 +100,7 @@
       return;
     }
 
-    // Tasa total = Tasa de interés + 2% de seguro de desgravamen
+    // Cálculo interno silencioso sumando el 2%
     const tasaTotal = tasaInteres + 2.0;
     const n = yrs * 12;
     const i = (tasaTotal / 100) / 12;
@@ -122,7 +117,7 @@
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
 
-    const msg = `🚗 *AUTOSALE MOTORS - COTIZACIÓN*\n• Monto: Bs ${monto}\n• Tasa de interés: ${tasa}%\n• Seguro desgravamen: 2% anual\n• Plazo: ${anios} años\n👉 *Cuota mensual total: ${bs}*`;
+    const msg = `🚗 *AUTOSALE MOTORS - COTIZACIÓN*\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 *Cuota mensual: ${bs}*`;
 
     navigator.clipboard.writeText(msg).then(() => {
       alert('¡Copiado para WhatsApp!');
