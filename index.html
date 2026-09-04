@@ -3,34 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Crédito</title>
+  <title>Autosale Motors - Cotizador</title>
+  
+  <!-- Icono de la aplicación -->
+  <link rel="icon" href="logo.jpg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: #f3f4f6; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .card { background: #ffffff; width: 100%; max-width: 380px; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    h2 { font-size: 20px; text-align: center; color: #111827; margin-bottom: 16px; font-weight: 700; }
+    body { background: #0f172a; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: #ffffff; width: 100%; max-width: 380px; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
+    
+    .logo-container { margin-bottom: 12px; }
+    .logo-container img { max-width: 200px; height: auto; border-radius: 8px; }
 
-    .field { margin-bottom: 14px; }
-    label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 5px; text-transform: uppercase; }
+    .field { margin-bottom: 14px; text-align: left; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
     input { width: 100%; padding: 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 16px; font-weight: 600; background: #f9fafb; outline: none; }
-    input:focus { border-color: #2563eb; background: #fff; }
+    input:focus { border-color: #dc2626; background: #fff; }
 
     .chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
     .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-weight: 600; color: #4b5563; cursor: pointer; }
-    .chip.active { background: #111827; color: #fff; border-color: #111827; }
+    .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+    .note { font-size: 11px; color: #6b7280; margin-top: 5px; font-weight: 500; }
 
     .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 18px; text-align: center; margin-top: 16px; }
     .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
-    .res-main { font-size: 34px; font-weight: 800; margin-top: 4px; }
+    .res-main { font-size: 34px; font-weight: 800; margin-top: 2px; }
+    .res-sub { font-size: 12px; opacity: 0.95; font-weight: 600; margin-top: 2px; }
 
-    .btn { width: 100%; padding: 14px; background: #111827; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; }
+    .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:active { opacity: 0.9; }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>Cotizador de Crédito</h2>
+  <div class="logo-container">
+    <img src="logo.jpg" alt="Autosale Motors">
+  </div>
 
   <div class="field">
     <label>Monto a financiar (Bs)</label>
@@ -47,6 +59,7 @@
       <span class="chip" onclick="setTasa(20, this)">20%</span>
       <span class="chip" onclick="setTasa(22, this)">22%</span>
     </div>
+    <div class="note">🛡️ Se incluye +2% anual de seguro de desgravamen</div>
   </div>
 
   <div class="field">
@@ -59,8 +72,9 @@
   </div>
 
   <div class="res-box">
-    <div class="res-title">Cuota Mensual Aprox</div>
+    <div class="res-title">Cuota Total Mensual</div>
     <div class="res-main" id="resBs">Bs 0</div>
+    <div class="res-sub">(Incluye seguro de desgravamen)</div>
   </div>
 
   <button class="btn" onclick="copiar()">📲 Copiar para WhatsApp</button>
@@ -83,16 +97,19 @@
 
   function calc() {
     const P = parseFloat(document.getElementById('monto').value) || 0;
-    const rate = parseFloat(document.getElementById('tasa').value) || 0;
+    const tasaInteres = parseFloat(document.getElementById('tasa').value) || 0;
     const yrs = parseFloat(document.getElementById('anios').value) || 0;
 
-    if (P <= 0 || rate <= 0 || yrs <= 0) {
+    if (P <= 0 || tasaInteres <= 0 || yrs <= 0) {
       document.getElementById('resBs').innerText = "Bs 0";
       return;
     }
 
+    // Tasa total = Tasa de interés + 2% de seguro de desgravamen
+    const tasaTotal = tasaInteres + 2.0;
     const n = yrs * 12;
-    const i = (rate / 100) / 12;
+    const i = (tasaTotal / 100) / 12;
+
     const cuotaBs = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
     const bsRedondeado = Math.round(cuotaBs);
 
@@ -105,7 +122,7 @@
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
 
-    const msg = `📌 COTIZACIÓN DE CRÉDITO\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 Cuota mensual Aprox: ${bs}`;
+    const msg = `🚗 *AUTOSALE MOTORS - COTIZACIÓN*\n• Monto: Bs ${monto}\n• Tasa de interés: ${tasa}%\n• Seguro desgravamen: 2% anual\n• Plazo: ${anios} años\n👉 *Cuota mensual total: ${bs}*`;
 
     navigator.clipboard.writeText(msg).then(() => {
       alert('¡Copiado para WhatsApp!');
