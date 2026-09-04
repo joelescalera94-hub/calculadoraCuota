@@ -59,7 +59,7 @@
   </div>
 
   <div class="res-box">
-    <div class="res-title">Cuota Pura Mensual</div>
+    <div class="res-title">Cuota Mensual Aprox</div>
     <div class="res-main" id="resBs">Bs 0</div>
   </div>
 
@@ -105,7 +105,7 @@
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
 
-    const msg = `📌 COTIZACIÓN DE CRÉDITO\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 Cuota mensual: ${bs}`;
+    const msg = `📌 COTIZACIÓN DE CRÉDITO\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 Cuota mensual Aprox: ${bs}`;
 
     navigator.clipboard.writeText(msg).then(() => {
       alert('¡Copiado para WhatsApp!');
