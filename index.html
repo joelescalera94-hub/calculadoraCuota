@@ -3,46 +3,224 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autosale Motors - Cotizador de Financiamiento</title>
+  <title>Autosale Motors - Cotizador Moderno</title>
   
   <link rel="icon" href="logo.jpg" type="image/jpeg">
   <link rel="apple-touch-icon" href="logo.jpg">
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: #0f172a; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .card { background: #ffffff; width: 100%; max-width: 420px; border-radius: 16px; padding: 22px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
-    
-    .logo-container { margin-bottom: 10px; }
-    .logo-container img { max-width: 170px; height: auto; border-radius: 8px; }
+    :root {
+      --bg-body: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --input-bg: #f8fafc;
+      --input-border: #cbd5e1;
+      --chip-bg: #f1f5f9;
+      --chip-border: #cbd5e1;
+      --chip-text: #475569;
+      --chip-active-bg: #dc2626;
+      --chip-active-text: #ffffff;
+      --res-bg: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      --btn-bg: #0f172a;
+      --btn-hover: #1e293b;
+      --btn-text: #ffffff;
+      --logo-bg: #000000;
+      --card-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+      --toggle-bg: #e2e8f0;
+      --toggle-icon: #0f172a;
+    }
 
-    .header-title { font-size: 13px; font-weight: 800; color: #dc2626; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    [data-theme="dark"] {
+      --bg-body: #090d16;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #0f172a;
+      --input-border: #334155;
+      --chip-bg: #0f172a;
+      --chip-border: #334155;
+      --chip-text: #cbd5e1;
+      --chip-active-bg: #dc2626;
+      --chip-active-text: #ffffff;
+      --res-bg: linear-gradient(135deg, #047857 0%, #059669 100%);
+      --btn-bg: #dc2626;
+      --btn-hover: #b91c1c;
+      --btn-text: #ffffff;
+      --logo-bg: #000000;
+      --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      --toggle-bg: #334155;
+      --toggle-icon: #fbbf24;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+    
+    body { 
+      background: var(--bg-body); 
+      padding: 20px 15px; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+    }
+
+    .card { 
+      background: var(--card-bg); 
+      width: 100%; 
+      max-width: 420px; 
+      border-radius: 20px; 
+      padding: 24px; 
+      box-shadow: var(--card-shadow); 
+      position: relative;
+    }
+    
+    /* Encabezado con Switch Dark/Light */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .theme-toggle {
+      background: var(--toggle-bg);
+      color: var(--toggle-icon);
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .logo-container { 
+      background: var(--logo-bg);
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .logo-container img { 
+      max-width: 200px; 
+      height: auto; 
+      display: block;
+    }
+
+    .header-title { 
+      font-size: 13px; 
+      font-weight: 800; 
+      color: #dc2626; 
+      text-transform: uppercase; 
+      letter-spacing: 1.2px; 
+      text-align: center;
+      margin-bottom: 16px; 
+    }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .field { margin-bottom: 12px; text-align: left; }
-    label { display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    input { width: 100%; padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 15px; font-weight: 600; background: #f9fafb; outline: none; }
-    input:focus { border-color: #dc2626; background: #fff; }
-    input[readonly] { background: #e5e7eb; color: #1f2937; cursor: not-allowed; }
+    
+    .field { margin-bottom: 14px; text-align: left; }
+    
+    label { 
+      display: block; 
+      font-size: 11px; 
+      font-weight: 700; 
+      color: var(--text-muted); 
+      margin-bottom: 5px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px; 
+    }
 
-    .chips { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
-    .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 11px; font-weight: 700; color: #4b5563; cursor: pointer; transition: all 0.2s ease; }
-    .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
+    input { 
+      width: 100%; 
+      padding: 11px 12px; 
+      border: 1.5px solid var(--input-border); 
+      border-radius: 10px; 
+      font-size: 15px; 
+      font-weight: 600; 
+      background: var(--input-bg); 
+      color: var(--text-main);
+      outline: none; 
+    }
+    input:focus { border-color: #dc2626; }
+    input[readonly] { opacity: 0.7; cursor: not-allowed; }
 
-    .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 16px; text-align: center; margin-top: 14px; }
-    .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
-    .res-main { font-size: 30px; font-weight: 800; margin-top: 2px; }
-    .res-sub { font-size: 13px; font-weight: 700; opacity: 0.95; margin-top: 4px; background: rgba(0,0,0,0.15); padding: 4px 8px; border-radius: 6px; display: inline-block; }
+    .chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .chip { 
+      padding: 6px 12px; 
+      background: var(--chip-bg); 
+      border: 1px solid var(--chip-border); 
+      border-radius: 8px; 
+      font-size: 12px; 
+      font-weight: 700; 
+      color: var(--chip-text); 
+      cursor: pointer; 
+    }
+    .chip.active { 
+      background: var(--chip-active-bg); 
+      color: var(--chip-active-text); 
+      border-color: var(--chip-active-bg); 
+    }
 
-    .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn:active { opacity: 0.9; }
+    .res-box { 
+      background: var(--res-bg); 
+      color: #ffffff; 
+      border-radius: 14px; 
+      padding: 18px 16px; 
+      text-align: center; 
+      margin-top: 16px; 
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+    .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; letter-spacing: 0.5px; }
+    .res-main { font-size: 32px; font-weight: 800; margin-top: 2px; }
+    .res-sub { 
+      font-size: 13px; 
+      font-weight: 700; 
+      opacity: 0.95; 
+      margin-top: 6px; 
+      background: rgba(0,0,0,0.2); 
+      padding: 4px 10px; 
+      border-radius: 20px; 
+      display: inline-block; 
+    }
+
+    .btn { 
+      width: 100%; 
+      padding: 14px; 
+      background: var(--btn-bg); 
+      color: var(--btn-text); 
+      border: none; 
+      border-radius: 10px; 
+      font-size: 14px; 
+      font-weight: 700; 
+      margin-top: 16px; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 8px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .btn:hover { background: var(--btn-hover); }
+    .btn:active { transform: scale(0.99); }
   </style>
 </head>
 <body>
 
 <div class="card">
+  <div class="top-bar">
+    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Cotizador Digital</div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Cambiar Tema">🌙</button>
+  </div>
+
   <div class="logo-container">
-    <img src="logo.jpg" alt="Autosale Motors">
+    <img src="logo.jpg" alt="Autosale Motors Logo">
   </div>
 
   <div class="header-title">Financiamiento Bancario</div>
@@ -59,7 +237,7 @@
 
     <div class="field">
       <label for="tc">T. Cambio (Bs/$)</label>
-      <input type="number" id="tc" value="6.96" step="0.01">
+      <input type="number" id="tc" value="0" step="0.01" placeholder="0">
     </div>
   </div>
 
@@ -72,14 +250,14 @@
 
     <div class="field">
       <label for="inicial" id="lbl-inicial">Cuota Inicial ($)</label>
-      <input type="number" id="inicial" value="5000" step="500">
+      <input type="number" id="inicial" value="0" step="500">
     </div>
   </div>
 
   <!-- Monto a Financiar -->
   <div class="field">
     <label for="monto" id="lbl-monto">Monto a Financiar ($)</label>
-    <input type="number" id="monto" value="20000" readonly>
+    <input type="number" id="monto" value="25000" readonly>
   </div>
 
   <!-- Tasa de Interés -->
@@ -119,20 +297,41 @@
   const SEGURO_DESGRAVAMEN = 1.55;
   let monedaActual = 'USD';
 
+  // Control de Tema Oscuro / Claro
+  function toggleTheme() {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.body.removeAttribute('data-theme');
+      document.getElementById('themeBtn').innerText = '🌙';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.body.setAttribute('data-theme', 'dark');
+      document.getElementById('themeBtn').innerText = '☀️';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  // Cargar preferencia de tema guardada
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.setAttribute('data-theme', 'dark');
+    document.getElementById('themeBtn').innerText = '☀️';
+  }
+
   function cambiarMoneda(nuevaMoneda) {
     if (monedaActual === nuevaMoneda) return;
 
-    const tc = parseFloat(document.getElementById('tc').value) || 6.96;
+    const tc = parseFloat(document.getElementById('tc').value) || 0;
     let precio = parseFloat(document.getElementById('precio').value) || 0;
     let inicial = parseFloat(document.getElementById('inicial').value) || 0;
 
-    // Convertir los montos del campo según el Tipo de Cambio al alternar moneda
-    if (nuevaMoneda === 'BOB') {
-      precio = Math.round(precio * tc);
-      inicial = Math.round(inicial * tc);
-    } else {
-      precio = Math.round(precio / tc);
-      inicial = Math.round(inicial / tc);
+    if (tc > 0) {
+      if (nuevaMoneda === 'BOB') {
+        precio = Math.round(precio * tc);
+        inicial = Math.round(inicial * tc);
+      } else {
+        precio = Math.round(precio / tc);
+        inicial = Math.round(inicial / tc);
+      }
     }
 
     monedaActual = nuevaMoneda;
@@ -171,7 +370,7 @@
   }
 
   function calc() {
-    const tc = parseFloat(document.getElementById('tc').value) || 6.96;
+    const tc = parseFloat(document.getElementById('tc').value) || 0;
     const precioInput = parseFloat(document.getElementById('precio').value) || 0;
     const inicialInput = parseFloat(document.getElementById('inicial').value) || 0;
     
@@ -181,13 +380,12 @@
     const tasaInteres = parseFloat(document.getElementById('tasa').value) || 0;
     const yrs = parseFloat(document.getElementById('anios').value) || 0;
 
-    if (montoInput <= 0 || tasaInteres <= 0 || yrs <= 0) {
+    if (montoInput <= 0 || tasaInteres <= 0 || yrs <= 0 || tc <= 0) {
       document.getElementById('resMain').innerText = monedaActual === 'USD' ? "$ 0" : "Bs 0";
       document.getElementById('resSub').innerText = monedaActual === 'USD' ? "Equivalente: Bs 0" : "Equivalente: $ 0";
       return;
     }
 
-    // Convertir el monto a financiar a Bolivianos para el cálculo bancario
     let montoBs = monedaActual === 'USD' ? (montoInput * tc) : montoInput;
 
     const tasaTotal = tasaInteres + SEGURO_DESGRAVAMEN;
@@ -208,10 +406,10 @@
   }
 
   function copiar() {
-    const tc = parseFloat(document.getElementById('tc').value || 6.96);
-    const precioInput = parseFloat(document.getElementById('precio').value || 0);
-    const inicialInput = parseFloat(document.getElementById('inicial').value || 0);
-    const montoInput = parseFloat(document.getElementById('monto').value || 0);
+    const tc = parseFloat(document.getElementById('tc').value) || 0;
+    const precioInput = parseFloat(document.getElementById('precio').value) || 0;
+    const inicialInput = parseFloat(document.getElementById('inicial').value) || 0;
+    const montoInput = parseFloat(document.getElementById('monto').value) || 0;
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
 
@@ -229,11 +427,11 @@
       montoBs = Math.round(montoInput * tc);
     } else {
       precioBs = precioInput;
-      precioUSD = Math.round(precioInput / tc);
+      precioUSD = tc > 0 ? Math.round(precioInput / tc) : 0;
       inicialBs = inicialInput;
-      inicialUSD = Math.round(inicialInput / tc);
+      inicialUSD = tc > 0 ? Math.round(inicialInput / tc) : 0;
       montoBs = montoInput;
-      montoUSD = Math.round(montoInput / tc);
+      montoUSD = tc > 0 ? Math.round(montoInput / tc) : 0;
     }
 
     let msg = `🚗 *AUTOSALE MOTORS - FINANCIAMIENTO BANCARIO*\n\n`;
@@ -273,7 +471,7 @@
     document.body.removeChild(textArea);
   }
 
-  // Event Listeners para actualizar en tiempo real
+  // Event Listeners
   document.getElementById('tc').addEventListener('input', calc);
   document.getElementById('precio').addEventListener('input', calc);
   document.getElementById('inicial').addEventListener('input', calc);
