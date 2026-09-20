@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autosale Motors - Cotizador</title>
+  <title>Autosale Motors - Cotizador de Financiamiento</title>
   
   <link rel="icon" href="logo.jpg" type="image/jpeg">
   <link rel="apple-touch-icon" href="logo.jpg">
@@ -11,23 +11,27 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: #0f172a; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .card { background: #ffffff; width: 100%; max-width: 380px; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
+    .card { background: #ffffff; width: 100%; max-width: 420px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
     
     .logo-container { margin-bottom: 12px; }
-    .logo-container img { max-width: 200px; height: auto; border-radius: 8px; }
+    .logo-container img { max-width: 180px; height: auto; border-radius: 8px; }
 
-    .field { margin-bottom: 14px; text-align: left; }
-    label { display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-    input { width: 100%; padding: 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 16px; font-weight: 600; background: #f9fafb; outline: none; }
+    .header-title { font-size: 14px; font-weight: 800; color: #dc2626; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .field { margin-bottom: 12px; text-align: left; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input { width: 100%; padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 15px; font-weight: 600; background: #f9fafb; outline: none; }
     input:focus { border-color: #dc2626; background: #fff; }
+    input[readonly] { background: #e5e7eb; color: #1f2937; cursor: not-allowed; }
 
-    .chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-    .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-weight: 600; color: #4b5563; cursor: pointer; transition: all 0.2s ease; }
+    .chips { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+    .chip { padding: 5px 8px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 11px; font-weight: 600; color: #4b5563; cursor: pointer; transition: all 0.2s ease; }
     .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
 
-    .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 18px; text-align: center; margin-top: 16px; }
+    .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 16px; text-align: center; margin-top: 14px; }
     .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
-    .res-main { font-size: 34px; font-weight: 800; margin-top: 2px; }
+    .res-main { font-size: 32px; font-weight: 800; margin-top: 2px; }
 
     .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:active { opacity: 0.9; }
@@ -40,13 +44,27 @@
     <img src="logo.jpg" alt="Autosale Motors">
   </div>
 
-  <div class="field">
-    <label for="monto">Monto a financiar (Bs)</label>
-    <input type="number" id="monto" value="150000" step="1000">
+  <div class="header-title">Financiamiento Bancario</div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="precio">Precio (Bs)</label>
+      <input type="number" id="precio" value="180000" step="1000">
+    </div>
+
+    <div class="field">
+      <label for="inicial">Cuota Inicial (Bs)</label>
+      <input type="number" id="inicial" value="30000" step="1000">
+    </div>
   </div>
 
   <div class="field">
-    <label for="tasa">Tasa Anual (%)</label>
+    <label for="monto">Monto a Financiar (Bs)</label>
+    <input type="number" id="monto" value="150000" readonly>
+  </div>
+
+  <div class="field">
+    <label for="tasa">Tasa de Interés (%)</label>
     <input type="number" id="tasa" value="16" step="0.1">
     <div class="chips" id="chips-tasa">
       <span class="chip" data-val="11.5" onclick="selectChip('tasa', 11.5, this)">11.5%</span>
@@ -66,6 +84,11 @@
     </div>
   </div>
 
+  <div class="field">
+    <label for="ejecutivo">Ejecutivo de Ventas</label>
+    <input type="text" id="ejecutivo" placeholder="Nombre del asesor">
+  </div>
+
   <div class="res-box">
     <div class="res-title">Cuota Mensual</div>
     <div class="res-main" id="resBs">Bs 0</div>
@@ -75,7 +98,6 @@
 </div>
 
 <script>
-  // Porcentaje adicional de seguro de desgravamen
   const SEGURO_DESGRAVAMEN = 1.55;
 
   function selectChip(inputId, value, element) {
@@ -98,7 +120,13 @@
   }
 
   function calc() {
-    const P = parseFloat(document.getElementById('monto').value) || 0;
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const inicial = parseFloat(document.getElementById('inicial').value) || 0;
+    
+    // Cálculo automático del monto a financiar
+    const P = Math.max(0, precio - inicial);
+    document.getElementById('monto').value = P;
+
     const tasaInteres = parseFloat(document.getElementById('tasa').value) || 0;
     const yrs = parseFloat(document.getElementById('anios').value) || 0;
 
@@ -107,7 +135,6 @@
       return;
     }
 
-    // Cálculo sumando el porcentaje de desgravamen
     const tasaTotal = tasaInteres + SEGURO_DESGRAVAMEN;
     const n = yrs * 12;
     const i = (tasaTotal / 100) / 12;
@@ -119,17 +146,29 @@
   }
 
   function copiar() {
-    const bs = document.getElementById('resBs').innerText;
-    const montoVal = parseFloat(document.getElementById('monto').value || 0);
-    const monto = montoVal.toLocaleString('es-BO');
+    const precio = parseFloat(document.getElementById('precio').value || 0).toLocaleString('es-BO');
+    const inicial = parseFloat(document.getElementById('inicial').value || 0).toLocaleString('es-BO');
+    const monto = parseFloat(document.getElementById('monto').value || 0).toLocaleString('es-BO');
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
+    const bs = document.getElementById('resBs').innerText;
+    const ejecutivo = document.getElementById('ejecutivo').value.trim();
 
-    const msg = `🚗 *AUTOSALE MOTORS - COTIZACIÓN*\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 *Cuota mensual: ${bs}*`;
+    let msg = `🚗 *AUTOSALE MOTORS - FINANCIAMIENTO BANCARIO*\n`;
+    msg += `• Precio: Bs ${precio}\n`;
+    msg += `• Cuota Inicial: Bs ${inicial}\n`;
+    msg += `• Monto a Financiar: Bs ${monto}\n`;
+    msg += `• Tasa de Interés: ${tasa}%\n`;
+    msg += `• Plazo: ${anios} años\n`;
+    msg += `👉 *Cuota mensual: ${bs}*`;
+    
+    if (ejecutivo) {
+      msg += `\n\n👤 *Ejecutivo de Ventas:* ${ejecutivo}`;
+    }
 
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(msg).then(() => {
-        alert('¡Copiado para WhatsApp!');
+        alert('¡Cotización copiada para WhatsApp!');
       }).catch(() => fallbackCopy(msg));
     } else {
       fallbackCopy(msg);
@@ -147,16 +186,17 @@
     
     try {
       document.execCommand('copy');
-      alert('¡Copiado para WhatsApp!');
+      alert('¡Cotización copiada para WhatsApp!');
     } catch (err) {
-      alert('No se pudo copiar automáticamente. Copia la cotización manualmente.');
+      alert('Copie el texto manualmente.');
     }
     
     document.body.removeChild(textArea);
   }
 
-  // Event Listeners para entradas de texto
-  document.getElementById('monto').addEventListener('input', calc);
+  // Event Listeners
+  document.getElementById('precio').addEventListener('input', calc);
+  document.getElementById('inicial').addEventListener('input', calc);
   
   document.getElementById('tasa').addEventListener('input', (e) => {
     updateChips('tasa', e.target.value);
@@ -168,7 +208,6 @@
     calc();
   });
 
-  // Inicializar cálculo al cargar
   calc();
 </script>
 
