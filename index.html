@@ -10,7 +10,7 @@
 
   <style>
     :root {
-      /* MODO CLARO: Limpio, minimalista y elegante */
+      /* MODO CLARO */
       --bg-body: #f8fafc;
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
@@ -25,6 +25,7 @@
       --chip-active-bg: #0f172a;
       --chip-active-text: #ffffff;
       --accent-red: #e11d48;
+      --highlight-bg: rgba(225, 29, 72, 0.04);
       --res-bg: #0f172a;
       --res-text: #ffffff;
       --res-sub-bg: rgba(255, 255, 255, 0.1);
@@ -40,7 +41,7 @@
     }
 
     [data-theme="dark"] {
-      /* MODO OSCURO: Stealth Black con acentos neón discretos */
+      /* MODO OSCURO (Predeterminado) */
       --bg-body: #080c14;
       --card-bg: #111827;
       --card-border: #1f2937;
@@ -55,6 +56,7 @@
       --chip-active-bg: #f43f5e;
       --chip-active-text: #ffffff;
       --accent-red: #f43f5e;
+      --highlight-bg: rgba(244, 63, 94, 0.08);
       --res-bg: #1e293b;
       --res-text: #ffffff;
       --res-sub-bg: rgba(244, 63, 94, 0.15);
@@ -128,8 +130,8 @@
 
     .logo-container { 
       background: var(--logo-bg);
-      padding: 14px;
-      border-radius: 14px;
+      padding: 10px; 
+      border-radius: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -138,7 +140,7 @@
     }
 
     .logo-container img { 
-      max-width: 180px; 
+      max-width: 130px; 
       height: auto; 
       display: block;
     }
@@ -191,8 +193,19 @@
     }
 
     input[readonly] { 
-      opacity: 0.6; 
+      opacity: 0.7; 
       cursor: not-allowed; 
+    }
+
+    /* Resalte ligero para Monto a Financiar */
+    .field.highlight label {
+      color: var(--accent-red);
+    }
+
+    .field.highlight input {
+      border: 1.5px solid var(--accent-red);
+      background: var(--highlight-bg);
+      font-weight: 700;
     }
 
     .chips { 
@@ -219,7 +232,7 @@
       border-color: var(--chip-active-bg); 
     }
 
-    /* Caja de Resultados Minimalista */
+    /* Caja de Resultados */
     .res-box { 
       background: var(--res-bg); 
       color: var(--res-text); 
@@ -283,12 +296,12 @@
     }
   </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <div class="card">
   <div class="top-bar">
     <div class="app-tag">Cotizador Digital</div>
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Cambiar Tema">🌙</button>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Cambiar Tema">☀️</button>
   </div>
 
   <div class="logo-container">
@@ -332,8 +345,8 @@
     </div>
   </div>
 
-  <!-- Monto a Financiar -->
-  <div class="field">
+  <!-- Monto a Financiar (Resaltado) -->
+  <div class="field highlight">
     <label for="monto" id="lbl-monto">Monto a Financiar ($)</label>
     <input type="number" id="monto" value="0" readonly>
   </div>
@@ -389,7 +402,11 @@
     }
   }
 
-  if (localStorage.getItem('theme') === 'dark') {
+  // Carga inicial de tema (Modo oscuro por defecto salvo elección en 'light')
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.removeAttribute('data-theme');
+    document.getElementById('themeBtn').innerText = '🌙';
+  } else {
     document.body.setAttribute('data-theme', 'dark');
     document.getElementById('themeBtn').innerText = '☀️';
   }
