@@ -3,61 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autosale Motors - Cotizador Moderno</title>
+  <title>Autosale Motors - Cotizador Minimalista</title>
   
   <link rel="icon" href="logo.jpg" type="image/jpeg">
   <link rel="apple-touch-icon" href="logo.jpg">
 
   <style>
     :root {
-      --bg-body: #f1f5f9;
+      /* MODO CLARO: Limpio, minimalista y elegante */
+      --bg-body: #f8fafc;
       --card-bg: #ffffff;
+      --card-border: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --input-bg: #f8fafc;
-      --input-border: #cbd5e1;
+      --input-border: #e2e8f0;
+      --input-focus: #e11d48;
       --chip-bg: #f1f5f9;
-      --chip-border: #cbd5e1;
+      --chip-border: #e2e8f0;
       --chip-text: #475569;
-      --chip-active-bg: #dc2626;
+      --chip-active-bg: #0f172a;
       --chip-active-text: #ffffff;
-      --res-bg: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      --btn-bg: #0f172a;
-      --btn-hover: #1e293b;
+      --accent-red: #e11d48;
+      --res-bg: #0f172a;
+      --res-text: #ffffff;
+      --res-sub-bg: rgba(255, 255, 255, 0.1);
+      --res-sub-text: #cbd5e1;
+      --btn-bg: #e11d48;
+      --btn-hover: #be123c;
       --btn-text: #ffffff;
       --logo-bg: #000000;
-      --card-shadow: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
-      --toggle-bg: #e2e8f0;
+      --toggle-bg: #f1f5f9;
+      --toggle-border: #e2e8f0;
       --toggle-icon: #0f172a;
+      --card-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.05);
     }
 
     [data-theme="dark"] {
-      --bg-body: #090d16;
-      --card-bg: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --input-bg: #0f172a;
-      --input-border: #334155;
-      --chip-bg: #0f172a;
-      --chip-border: #334155;
-      --chip-text: #cbd5e1;
-      --chip-active-bg: #dc2626;
+      /* MODO OSCURO: Stealth Black con acentos neón discretos */
+      --bg-body: #080c14;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --input-bg: #1f2937;
+      --input-border: #374151;
+      --input-focus: #f43f5e;
+      --chip-bg: #1f2937;
+      --chip-border: #374151;
+      --chip-text: #d1d5db;
+      --chip-active-bg: #f43f5e;
       --chip-active-text: #ffffff;
-      --res-bg: linear-gradient(135deg, #047857 0%, #059669 100%);
-      --btn-bg: #dc2626;
-      --btn-hover: #b91c1c;
+      --accent-red: #f43f5e;
+      --res-bg: #1e293b;
+      --res-text: #ffffff;
+      --res-sub-bg: rgba(244, 63, 94, 0.15);
+      --res-sub-text: #fda4af;
+      --btn-bg: #f43f5e;
+      --btn-hover: #e11d48;
       --btn-text: #ffffff;
       --logo-bg: #000000;
-      --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      --toggle-bg: #334155;
+      --toggle-bg: #1f2937;
+      --toggle-border: #374151;
       --toggle-icon: #fbbf24;
+      --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; 
+    }
     
     body { 
       background: var(--bg-body); 
-      padding: 20px 15px; 
+      padding: 24px 16px; 
       display: flex; 
       justify-content: center; 
       align-items: center; 
@@ -67,9 +89,10 @@
     .card { 
       background: var(--card-bg); 
       width: 100%; 
-      max-width: 420px; 
+      max-width: 400px; 
       border-radius: 20px; 
       padding: 24px; 
+      border: 1px solid var(--card-border);
       box-shadow: var(--card-shadow); 
       position: relative;
     }
@@ -78,113 +101,157 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .app-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .theme-toggle {
       background: var(--toggle-bg);
       color: var(--toggle-icon);
-      border: none;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
+      border: 1px solid var(--toggle-border);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      font-size: 16px;
     }
 
     .logo-container { 
       background: var(--logo-bg);
-      padding: 12px;
-      border-radius: 12px;
+      padding: 14px;
+      border-radius: 14px;
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
+
     .logo-container img { 
-      max-width: 200px; 
+      max-width: 180px; 
       height: auto; 
       display: block;
     }
 
     .header-title { 
-      font-size: 13px; 
+      font-size: 11px; 
       font-weight: 800; 
-      color: #dc2626; 
+      color: var(--accent-red); 
       text-transform: uppercase; 
-      letter-spacing: 1.2px; 
+      letter-spacing: 1.5px; 
       text-align: center;
-      margin-bottom: 16px; 
+      margin-bottom: 20px; 
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-2 { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
     
-    .field { margin-bottom: 14px; text-align: left; }
+    .field { 
+      margin-bottom: 16px; 
+      text-align: left; 
+    }
     
     label { 
       display: block; 
-      font-size: 11px; 
+      font-size: 10px; 
       font-weight: 700; 
       color: var(--text-muted); 
-      margin-bottom: 5px; 
+      margin-bottom: 6px; 
       text-transform: uppercase; 
-      letter-spacing: 0.5px; 
+      letter-spacing: 0.8px; 
     }
 
     input { 
       width: 100%; 
-      padding: 11px 12px; 
-      border: 1.5px solid var(--input-border); 
+      padding: 10px 12px; 
+      border: 1px solid var(--input-border); 
       border-radius: 10px; 
-      font-size: 15px; 
+      font-size: 14px; 
       font-weight: 600; 
       background: var(--input-bg); 
       color: var(--text-main);
       outline: none; 
     }
-    input:focus { border-color: #dc2626; }
-    input[readonly] { opacity: 0.7; cursor: not-allowed; }
 
-    .chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    input:focus { 
+      border-color: var(--input-focus); 
+    }
+
+    input[readonly] { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+    }
+
+    .chips { 
+      display: flex; 
+      gap: 5px; 
+      margin-top: 6px; 
+      flex-wrap: wrap; 
+    }
+
     .chip { 
-      padding: 6px 12px; 
+      padding: 5px 10px; 
       background: var(--chip-bg); 
       border: 1px solid var(--chip-border); 
       border-radius: 8px; 
-      font-size: 12px; 
-      font-weight: 700; 
+      font-size: 11px; 
+      font-weight: 600; 
       color: var(--chip-text); 
       cursor: pointer; 
     }
+
     .chip.active { 
       background: var(--chip-active-bg); 
       color: var(--chip-active-text); 
       border-color: var(--chip-active-bg); 
     }
 
+    /* Caja de Resultados Minimalista */
     .res-box { 
       background: var(--res-bg); 
-      color: #ffffff; 
+      color: var(--res-text); 
       border-radius: 14px; 
-      padding: 18px 16px; 
+      padding: 20px 16px; 
       text-align: center; 
-      margin-top: 16px; 
-      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+      margin-top: 10px; 
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
-    .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; letter-spacing: 0.5px; }
-    .res-main { font-size: 32px; font-weight: 800; margin-top: 2px; }
-    .res-sub { 
-      font-size: 13px; 
+
+    .res-title { 
+      font-size: 10px; 
+      text-transform: uppercase; 
       font-weight: 700; 
-      opacity: 0.95; 
-      margin-top: 6px; 
-      background: rgba(0,0,0,0.2); 
-      padding: 4px 10px; 
+      opacity: 0.7; 
+      letter-spacing: 1px; 
+    }
+
+    .res-main { 
+      font-size: 30px; 
+      font-weight: 800; 
+      margin-top: 2px; 
+      letter-spacing: -0.5px;
+    }
+
+    .res-sub { 
+      font-size: 12px; 
+      font-weight: 600; 
+      color: var(--res-sub-text); 
+      margin-top: 8px; 
+      background: var(--res-sub-bg); 
+      padding: 4px 12px; 
       border-radius: 20px; 
       display: inline-block; 
     }
@@ -195,8 +262,8 @@
       background: var(--btn-bg); 
       color: var(--btn-text); 
       border: none; 
-      border-radius: 10px; 
-      font-size: 14px; 
+      border-radius: 12px; 
+      font-size: 13px; 
       font-weight: 700; 
       margin-top: 16px; 
       cursor: pointer; 
@@ -204,17 +271,23 @@
       align-items: center; 
       justify-content: center; 
       gap: 8px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      letter-spacing: 0.3px;
     }
-    .btn:hover { background: var(--btn-hover); }
-    .btn:active { transform: scale(0.99); }
+
+    .btn:hover { 
+      background: var(--btn-hover); 
+    }
+
+    .btn:active { 
+      transform: scale(0.98); 
+    }
   </style>
 </head>
 <body>
 
 <div class="card">
   <div class="top-bar">
-    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Cotizador Digital</div>
+    <div class="app-tag">Cotizador Digital</div>
     <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Cambiar Tema">🌙</button>
   </div>
 
@@ -240,23 +313,29 @@
     </div>
   </div>
 
-  <!-- Precio y Cuota Inicial -->
-  <div class="grid-2">
-    <div class="field">
-      <label for="precio" id="lbl-precio">Precio ($)</label>
-      <input type="number" id="precio" value="25000" step="500">
-    </div>
+  <!-- Precio del Vehículo -->
+  <div class="field">
+    <label for="precio" id="lbl-precio">Precio ($)</label>
+    <input type="number" id="precio" value="0" step="500">
+  </div>
 
-    <div class="field">
-      <label for="inicial" id="lbl-inicial">Cuota Inicial ($)</label>
-      <input type="number" id="inicial" value="0" step="500">
+  <!-- Cuota Inicial con Selección por Porcentaje -->
+  <div class="field">
+    <label for="inicial" id="lbl-inicial">Cuota Inicial ($)</label>
+    <input type="number" id="inicial" value="0" step="500">
+    <div class="chips" id="chips-pct-inicial">
+      <span class="chip active" data-pct="0" onclick="selectPctInicial(0, this)">0%</span>
+      <span class="chip" data-pct="10" onclick="selectPctInicial(10, this)">10%</span>
+      <span class="chip" data-pct="20" onclick="selectPctInicial(20, this)">20%</span>
+      <span class="chip" data-pct="30" onclick="selectPctInicial(30, this)">30%</span>
+      <span class="chip" data-pct="50" onclick="selectPctInicial(50, this)">50%</span>
     </div>
   </div>
 
   <!-- Monto a Financiar -->
   <div class="field">
     <label for="monto" id="lbl-monto">Monto a Financiar ($)</label>
-    <input type="number" id="monto" value="25000" readonly>
+    <input type="number" id="monto" value="0" readonly>
   </div>
 
   <!-- Tasa de Interés -->
@@ -295,6 +374,7 @@
 <script>
   const SEGURO_DESGRAVAMEN = 1.55;
   let monedaActual = 'USD';
+  let pctInicialActivo = 0;
 
   function toggleTheme() {
     const isDark = document.body.getAttribute('data-theme') === 'dark';
@@ -312,6 +392,28 @@
   if (localStorage.getItem('theme') === 'dark') {
     document.body.setAttribute('data-theme', 'dark');
     document.getElementById('themeBtn').innerText = '☀️';
+  }
+
+  function selectPctInicial(pct, element) {
+    pctInicialActivo = pct;
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const inicial = Math.round(precio * (pct / 100));
+    document.getElementById('inicial').value = inicial;
+    
+    updatePctChips(pct);
+    calc();
+  }
+
+  function updatePctChips(pct) {
+    const container = document.getElementById('chips-pct-inicial');
+    if (!container) return;
+    container.querySelectorAll('.chip').forEach(chip => {
+      if (parseFloat(chip.getAttribute('data-pct')) === parseFloat(pct)) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
   }
 
   function cambiarMoneda(nuevaMoneda) {
@@ -468,9 +570,32 @@
     document.body.removeChild(textArea);
   }
 
+  // Event Listeners
   document.getElementById('tc').addEventListener('input', calc);
-  document.getElementById('precio').addEventListener('input', calc);
-  document.getElementById('inicial').addEventListener('input', calc);
+
+  document.getElementById('precio').addEventListener('input', () => {
+    if (pctInicialActivo !== null && pctInicialActivo >= 0) {
+      const precio = parseFloat(document.getElementById('precio').value) || 0;
+      const inicial = Math.round(precio * (pctInicialActivo / 100));
+      document.getElementById('inicial').value = inicial;
+    }
+    calc();
+  });
+
+  document.getElementById('inicial').addEventListener('input', (e) => {
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const inicial = parseFloat(e.target.value) || 0;
+    
+    if (precio > 0) {
+      const pct = (inicial / precio) * 100;
+      pctInicialActivo = pct;
+      updatePctChips(pct);
+    } else {
+      pctInicialActivo = null;
+      updatePctChips(-1);
+    }
+    calc();
+  });
   
   document.getElementById('tasa').addEventListener('input', (e) => {
     updateChips('tasa', e.target.value);
