@@ -25,13 +25,14 @@
     input:focus { border-color: #dc2626; background: #fff; }
     input[readonly] { background: #e5e7eb; color: #1f2937; cursor: not-allowed; }
 
-    .chips { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
-    .chip { padding: 5px 8px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 11px; font-weight: 600; color: #4b5563; cursor: pointer; transition: all 0.2s ease; }
+    .chips { display: flex; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+    .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 11px; font-weight: 700; color: #4b5563; cursor: pointer; transition: all 0.2s ease; }
     .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
 
     .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 16px; text-align: center; margin-top: 14px; }
     .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
     .res-main { font-size: 32px; font-weight: 800; margin-top: 2px; }
+    .res-sub { font-size: 13px; font-weight: 600; opacity: 0.95; margin-top: 2px; }
 
     .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:active { opacity: 0.9; }
@@ -46,25 +47,41 @@
 
   <div class="header-title">Financiamiento Bancario</div>
 
+  <!-- Selección de Moneda y Tipo de Cambio -->
   <div class="grid-2">
     <div class="field">
-      <label for="precio">Precio (Bs)</label>
-      <input type="number" id="precio" value="180000" step="1000">
+      <label>Moneda</label>
+      <div class="chips">
+        <span class="chip active" id="chip-usd" onclick="setMoneda('USD')">$ USD</span>
+        <span class="chip" id="chip-bob" onclick="setMoneda('BOB')">Bs BOB</span>
+      </div>
     </div>
 
     <div class="field">
-      <label for="inicial">Cuota Inicial (Bs)</label>
-      <input type="number" id="inicial" value="30000" step="1000">
+      <label for="tc">T. Cambio (Bs/$)</label>
+      <input type="number" id="tc" value="6.96" step="0.01">
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="field">
+      <label for="precio" id="lbl-precio">Precio ($)</label>
+      <input type="number" id="precio" value="25000" step="500">
+    </div>
+
+    <div class="field">
+      <label for="inicial" id="lbl-inicial">Cuota Inicial ($)</label>
+      <input type="number" id="inicial" value="5000" step="500">
     </div>
   </div>
 
   <div class="field">
-    <label for="monto">Monto a Financiar (Bs)</label>
-    <input type="number" id="monto" value="150000" readonly>
+    <label for="monto" id="lbl-monto">Monto a Financiar ($)</label>
+    <input type="number" id="monto" value="20000" readonly>
   </div>
 
   <div class="field">
-    <label for="tasa">Tasa de Interés (%)</label>
+    <label for="tasa">Tasa de Interés Anual (%)</label>
     <input type="number" id="tasa" value="16" step="0.1">
     <div class="chips" id="chips-tasa">
       <span class="chip" data-val="11.5" onclick="selectChip('tasa', 11.5, this)">11.5%</span>
@@ -84,14 +101,10 @@
     </div>
   </div>
 
-  <div class="field">
-    <label for="ejecutivo">Ejecutivo de Ventas</label>
-    <input type="text" id="ejecutivo" placeholder="Nombre del asesor">
-  </div>
-
   <div class="res-box">
-    <div class="res-title">Cuota Mensual</div>
-    <div class="res-main" id="resBs">Bs 0</div>
+    <div class="res-title">Cuota Mensual Estimada</div>
+    <div class="res-main" id="resMain">$ 0</div>
+    <div class="res-sub" id="resSub">Equivalente: Bs 0</div>
   </div>
 
   <button class="btn" onclick="copiar()">📲 Copiar para WhatsApp</button>
@@ -99,6 +112,20 @@
 
 <script>
   const SEGURO_DESGRAVAMEN = 1.55;
+  let monedaActual = 'USD';
+
+  function setMoneda(m) {
+    monedaActual = m;
+    document.getElementById('chip-usd').classList.toggle('active', m === 'USD');
+    document.getElementById('chip-bob').classList.toggle('active', m === 'BOB');
+
+    const sim = m === 'USD' ? '$' : 'Bs';
+    document.getElementById('lbl-precio').innerText = `Precio (${sim})`;
+    document.getElementById('lbl-inicial').innerText = `Cuota Inicial (${sim})`;
+    document.getElementById('lbl-monto').innerText = `Monto a Financiar (${sim})`;
+
+    calc();
+  }
 
   function selectChip(inputId, value, element) {
     document.getElementById(inputId).value = value;
@@ -120,10 +147,11 @@
   }
 
   function calc() {
+    const tc = parseFloat(document.getElementById('tc').value) || 6.96;
     const precio = parseFloat(document.getElementById('precio').value) || 0;
     const inicial = parseFloat(document.getElementById('inicial').value) || 0;
     
-    // Cálculo automático del monto a financiar
+    // Monto base según moneda
     const P = Math.max(0, precio - inicial);
     document.getElementById('monto').value = P;
 
@@ -131,7 +159,8 @@
     const yrs = parseFloat(document.getElementById('anios').value) || 0;
 
     if (P <= 0 || tasaInteres <= 0 || yrs <= 0) {
-      document.getElementById('resBs').innerText = "Bs 0";
+      document.getElementById('resMain').innerText = monedaActual === 'USD' ? "$ 0" : "Bs 0";
+      document.getElementById('resSub').innerText = monedaActual === 'USD' ? "Equivalente: Bs 0" : "Equivalente: $ 0";
       return;
     }
 
@@ -139,32 +168,43 @@
     const n = yrs * 12;
     const i = (tasaTotal / 100) / 12;
 
-    const cuotaBs = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
-    const bsRedondeado = Math.round(cuotaBs);
+    const cuotaBase = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
 
-    document.getElementById('resBs').innerText = "Bs " + bsRedondeado.toLocaleString('es-BO');
+    if (monedaActual === 'USD') {
+      const cuotaUSD = Math.round(cuotaBase);
+      const cuotaBs = Math.round(cuotaBase * tc);
+      document.getElementById('resMain').innerText = "$ " + cuotaUSD.toLocaleString('en-US');
+      document.getElementById('resSub').innerText = "Equivalente: Bs " + cuotaBs.toLocaleString('es-BO');
+    } else {
+      const cuotaBs = Math.round(cuotaBase);
+      const cuotaUSD = Math.round(cuotaBase / tc);
+      document.getElementById('resMain').innerText = "Bs " + cuotaBs.toLocaleString('es-BO');
+      document.getElementById('resSub').innerText = "Equivalente: $ " + cuotaUSD.toLocaleString('en-US');
+    }
   }
 
   function copiar() {
-    const precio = parseFloat(document.getElementById('precio').value || 0).toLocaleString('es-BO');
-    const inicial = parseFloat(document.getElementById('inicial').value || 0).toLocaleString('es-BO');
-    const monto = parseFloat(document.getElementById('monto').value || 0).toLocaleString('es-BO');
+    const tc = parseFloat(document.getElementById('tc').value || 6.96);
+    const precioVal = parseFloat(document.getElementById('precio').value || 0);
+    const inicialVal = parseFloat(document.getElementById('inicial').value || 0);
+    const montoVal = parseFloat(document.getElementById('monto').value || 0);
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
-    const bs = document.getElementById('resBs').innerText;
-    const ejecutivo = document.getElementById('ejecutivo').value.trim();
+
+    const resMain = document.getElementById('resMain').innerText;
+    const resSub = document.getElementById('resSub').innerText;
+
+    const sim = monedaActual === 'USD' ? '$' : 'Bs';
+    const locale = monedaActual === 'USD' ? 'en-US' : 'es-BO';
 
     let msg = `🚗 *AUTOSALE MOTORS - FINANCIAMIENTO BANCARIO*\n`;
-    msg += `• Precio: Bs ${precio}\n`;
-    msg += `• Cuota Inicial: Bs ${inicial}\n`;
-    msg += `• Monto a Financiar: Bs ${monto}\n`;
+    msg += `• Tipo de Cambio: Bs ${tc}\n`;
+    msg += `• Precio: ${sim} ${precioVal.toLocaleString(locale)}\n`;
+    msg += `• Cuota Inicial: ${sim} ${inicialVal.toLocaleString(locale)}\n`;
+    msg += `• Monto a Financiar: ${sim} ${montoVal.toLocaleString(locale)}\n`;
     msg += `• Tasa de Interés: ${tasa}%\n`;
     msg += `• Plazo: ${anios} años\n`;
-    msg += `👉 *Cuota mensual: ${bs}*`;
-    
-    if (ejecutivo) {
-      msg += `\n\n👤 *Ejecutivo de Ventas:* ${ejecutivo}`;
-    }
+    msg += `👉 *Cuota mensual: ${resMain}* (${resSub})`;
 
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(msg).then(() => {
@@ -195,6 +235,7 @@
   }
 
   // Event Listeners
+  document.getElementById('tc').addEventListener('input', calc);
   document.getElementById('precio').addEventListener('input', calc);
   document.getElementById('inicial').addEventListener('input', calc);
   
