@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autosale Motors - Cotizador</title>
   
-  <!-- Icono de la aplicación -->
   <link rel="icon" href="logo.jpg" type="image/jpeg">
   <link rel="apple-touch-icon" href="logo.jpg">
 
@@ -23,7 +22,7 @@
     input:focus { border-color: #dc2626; background: #fff; }
 
     .chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
-    .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-weight: 600; color: #4b5563; cursor: pointer; }
+    .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-weight: 600; color: #4b5563; cursor: pointer; transition: all 0.2s ease; }
     .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
 
     .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 18px; text-align: center; margin-top: 16px; }
@@ -42,28 +41,28 @@
   </div>
 
   <div class="field">
-    <label>Monto a financiar (Bs)</label>
+    <label for="monto">Monto a financiar (Bs)</label>
     <input type="number" id="monto" value="150000" step="1000">
   </div>
 
   <div class="field">
-    <label>Tasa Anual (%)</label>
+    <label for="tasa">Tasa Anual (%)</label>
     <input type="number" id="tasa" value="16" step="0.1">
-    <div class="chips">
-      <span class="chip" onclick="setTasa(11.5, this)">11.5%</span>
-      <span class="chip" onclick="setTasa(12, this)">12%</span>
-      <span class="chip active" onclick="setTasa(16, this)">16%</span>
-      <span class="chip" onclick="setTasa(20, this)">20%</span>
-      <span class="chip" onclick="setTasa(22, this)">22%</span>
+    <div class="chips" id="chips-tasa">
+      <span class="chip" data-val="11.5" onclick="selectChip('tasa', 11.5, this)">11.5%</span>
+      <span class="chip" data-val="12" onclick="selectChip('tasa', 12, this)">12%</span>
+      <span class="chip active" data-val="16" onclick="selectChip('tasa', 16, this)">16%</span>
+      <span class="chip" data-val="20" onclick="selectChip('tasa', 20, this)">20%</span>
+      <span class="chip" data-val="22" onclick="selectChip('tasa', 22, this)">22%</span>
     </div>
   </div>
 
   <div class="field">
-    <label>Plazo (Años)</label>
+    <label for="anios">Plazo (Años)</label>
     <input type="number" id="anios" value="5" step="1">
-    <div class="chips">
-      <span class="chip active" onclick="setAnios(5, this)">5 Años</span>
-      <span class="chip" onclick="setAnios(7, this)">7 Años</span>
+    <div class="chips" id="chips-anios">
+      <span class="chip active" data-val="5" onclick="selectChip('anios', 5, this)">5 Años</span>
+      <span class="chip" data-val="7" onclick="selectChip('anios', 7, this)">7 Años</span>
     </div>
   </div>
 
@@ -76,18 +75,26 @@
 </div>
 
 <script>
-  function setTasa(v, el) {
-    document.getElementById('tasa').value = v;
-    el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
+  // Porcentaje adicional de seguro de desgravamen
+  const SEGURO_DESGRAVAMEN = 1.55;
+
+  function selectChip(inputId, value, element) {
+    document.getElementById(inputId).value = value;
+    updateChips(inputId, value);
     calc();
   }
 
-  function setAnios(v, el) {
-    document.getElementById('anios').value = v;
-    el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    calc();
+  function updateChips(inputId, value) {
+    const container = document.getElementById(`chips-${inputId}`);
+    if (!container) return;
+    
+    container.querySelectorAll('.chip').forEach(chip => {
+      if (parseFloat(chip.getAttribute('data-val')) === parseFloat(value)) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
   }
 
   function calc() {
@@ -100,8 +107,8 @@
       return;
     }
 
-    // Cálculo interno silencioso sumando el 1.55% de seguro desgravamen
-    const tasaTotal = tasaInteres + 2;
+    // Cálculo sumando el porcentaje de desgravamen
+    const tasaTotal = tasaInteres + SEGURO_DESGRAVAMEN;
     const n = yrs * 12;
     const i = (tasaTotal / 100) / 12;
 
@@ -113,23 +120,57 @@
 
   function copiar() {
     const bs = document.getElementById('resBs').innerText;
-    const monto = parseFloat(document.getElementById('monto').value || 0).toLocaleString('es-BO');
+    const montoVal = parseFloat(document.getElementById('monto').value || 0);
+    const monto = montoVal.toLocaleString('es-BO');
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
 
     const msg = `🚗 *AUTOSALE MOTORS - COTIZACIÓN*\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 *Cuota mensual: ${bs}*`;
 
-    navigator.clipboard.writeText(msg).then(() => {
-      alert('¡Copiado para WhatsApp!');
-    }).catch(() => {
-      alert('Cuota: ' + bs);
-    });
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(msg).then(() => {
+        alert('¡Copiado para WhatsApp!');
+      }).catch(() => fallbackCopy(msg));
+    } else {
+      fallbackCopy(msg);
+    }
   }
 
-  document.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calc));
+  function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      alert('¡Copiado para WhatsApp!');
+    } catch (err) {
+      alert('No se pudo copiar automáticamente. Copia la cotización manualmente.');
+    }
+    
+    document.body.removeChild(textArea);
+  }
+
+  // Event Listeners para entradas de texto
+  document.getElementById('monto').addEventListener('input', calc);
+  
+  document.getElementById('tasa').addEventListener('input', (e) => {
+    updateChips('tasa', e.target.value);
+    calc();
+  });
+  
+  document.getElementById('anios').addEventListener('input', (e) => {
+    updateChips('anios', e.target.value);
+    calc();
+  });
+
+  // Inicializar cálculo al cargar
   calc();
 </script>
 
 </body>
 </html>
-
