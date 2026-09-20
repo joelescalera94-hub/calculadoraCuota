@@ -74,7 +74,6 @@
       position: relative;
     }
     
-    /* Encabezado con Switch Dark/Light */
     .top-bar {
       display: flex;
       justify-content: space-between;
@@ -297,7 +296,6 @@
   const SEGURO_DESGRAVAMEN = 1.55;
   let monedaActual = 'USD';
 
-  // Control de Tema Oscuro / Claro
   function toggleTheme() {
     const isDark = document.body.getAttribute('data-theme') === 'dark';
     if (isDark) {
@@ -311,7 +309,6 @@
     }
   }
 
-  // Cargar preferencia de tema guardada
   if (localStorage.getItem('theme') === 'dark') {
     document.body.setAttribute('data-theme', 'dark');
     document.getElementById('themeBtn').innerText = '☀️';
@@ -471,7 +468,6 @@
     document.body.removeChild(textArea);
   }
 
-  // Event Listeners
   document.getElementById('tc').addEventListener('input', calc);
   document.getElementById('precio').addEventListener('input', calc);
   document.getElementById('inicial').addEventListener('input', calc);
