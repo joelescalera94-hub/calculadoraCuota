@@ -11,12 +11,12 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: #0f172a; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .card { background: #ffffff; width: 100%; max-width: 420px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
+    .card { background: #ffffff; width: 100%; max-width: 420px; border-radius: 16px; padding: 22px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
     
-    .logo-container { margin-bottom: 12px; }
-    .logo-container img { max-width: 180px; height: auto; border-radius: 8px; }
+    .logo-container { margin-bottom: 10px; }
+    .logo-container img { max-width: 170px; height: auto; border-radius: 8px; }
 
-    .header-title { font-size: 14px; font-weight: 800; color: #dc2626; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .header-title { font-size: 13px; font-weight: 800; color: #dc2626; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .field { margin-bottom: 12px; text-align: left; }
@@ -31,8 +31,8 @@
 
     .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 16px; text-align: center; margin-top: 14px; }
     .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
-    .res-main { font-size: 32px; font-weight: 800; margin-top: 2px; }
-    .res-sub { font-size: 13px; font-weight: 600; opacity: 0.95; margin-top: 2px; }
+    .res-main { font-size: 30px; font-weight: 800; margin-top: 2px; }
+    .res-sub { font-size: 13px; font-weight: 700; opacity: 0.95; margin-top: 4px; background: rgba(0,0,0,0.15); padding: 4px 8px; border-radius: 6px; display: inline-block; }
 
     .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn:active { opacity: 0.9; }
@@ -47,13 +47,13 @@
 
   <div class="header-title">Financiamiento Bancario</div>
 
-  <!-- Selección de Moneda y Tipo de Cambio -->
+  <!-- Moneda y Tipo de Cambio -->
   <div class="grid-2">
     <div class="field">
-      <label>Moneda</label>
+      <label>Moneda Base</label>
       <div class="chips">
-        <span class="chip active" id="chip-usd" onclick="setMoneda('USD')">$ USD</span>
-        <span class="chip" id="chip-bob" onclick="setMoneda('BOB')">Bs BOB</span>
+        <span class="chip active" id="chip-usd" onclick="cambiarMoneda('USD')">$ USD</span>
+        <span class="chip" id="chip-bob" onclick="cambiarMoneda('BOB')">Bs BOB</span>
       </div>
     </div>
 
@@ -63,6 +63,7 @@
     </div>
   </div>
 
+  <!-- Precio y Cuota Inicial -->
   <div class="grid-2">
     <div class="field">
       <label for="precio" id="lbl-precio">Precio ($)</label>
@@ -75,11 +76,13 @@
     </div>
   </div>
 
+  <!-- Monto a Financiar -->
   <div class="field">
     <label for="monto" id="lbl-monto">Monto a Financiar ($)</label>
     <input type="number" id="monto" value="20000" readonly>
   </div>
 
+  <!-- Tasa de Interés -->
   <div class="field">
     <label for="tasa">Tasa de Interés Anual (%)</label>
     <input type="number" id="tasa" value="16" step="0.1">
@@ -92,6 +95,7 @@
     </div>
   </div>
 
+  <!-- Plazo -->
   <div class="field">
     <label for="anios">Plazo (Años)</label>
     <input type="number" id="anios" value="5" step="1">
@@ -101,6 +105,7 @@
     </div>
   </div>
 
+  <!-- Cuota Resultante -->
   <div class="res-box">
     <div class="res-title">Cuota Mensual Estimada</div>
     <div class="res-main" id="resMain">$ 0</div>
@@ -114,12 +119,31 @@
   const SEGURO_DESGRAVAMEN = 1.55;
   let monedaActual = 'USD';
 
-  function setMoneda(m) {
-    monedaActual = m;
-    document.getElementById('chip-usd').classList.toggle('active', m === 'USD');
-    document.getElementById('chip-bob').classList.toggle('active', m === 'BOB');
+  function cambiarMoneda(nuevaMoneda) {
+    if (monedaActual === nuevaMoneda) return;
 
-    const sim = m === 'USD' ? '$' : 'Bs';
+    const tc = parseFloat(document.getElementById('tc').value) || 6.96;
+    let precio = parseFloat(document.getElementById('precio').value) || 0;
+    let inicial = parseFloat(document.getElementById('inicial').value) || 0;
+
+    // Convertir los montos del campo según el Tipo de Cambio al alternar moneda
+    if (nuevaMoneda === 'BOB') {
+      precio = Math.round(precio * tc);
+      inicial = Math.round(inicial * tc);
+    } else {
+      precio = Math.round(precio / tc);
+      inicial = Math.round(inicial / tc);
+    }
+
+    monedaActual = nuevaMoneda;
+
+    document.getElementById('precio').value = precio;
+    document.getElementById('inicial').value = inicial;
+
+    document.getElementById('chip-usd').classList.toggle('active', nuevaMoneda === 'USD');
+    document.getElementById('chip-bob').classList.toggle('active', nuevaMoneda === 'BOB');
+
+    const sim = nuevaMoneda === 'USD' ? '$' : 'Bs';
     document.getElementById('lbl-precio').innerText = `Precio (${sim})`;
     document.getElementById('lbl-inicial').innerText = `Cuota Inicial (${sim})`;
     document.getElementById('lbl-monto').innerText = `Monto a Financiar (${sim})`;
@@ -148,36 +172,36 @@
 
   function calc() {
     const tc = parseFloat(document.getElementById('tc').value) || 6.96;
-    const precio = parseFloat(document.getElementById('precio').value) || 0;
-    const inicial = parseFloat(document.getElementById('inicial').value) || 0;
+    const precioInput = parseFloat(document.getElementById('precio').value) || 0;
+    const inicialInput = parseFloat(document.getElementById('inicial').value) || 0;
     
-    // Monto base según moneda
-    const P = Math.max(0, precio - inicial);
-    document.getElementById('monto').value = P;
+    const montoInput = Math.max(0, precioInput - inicialInput);
+    document.getElementById('monto').value = montoInput;
 
     const tasaInteres = parseFloat(document.getElementById('tasa').value) || 0;
     const yrs = parseFloat(document.getElementById('anios').value) || 0;
 
-    if (P <= 0 || tasaInteres <= 0 || yrs <= 0) {
+    if (montoInput <= 0 || tasaInteres <= 0 || yrs <= 0) {
       document.getElementById('resMain').innerText = monedaActual === 'USD' ? "$ 0" : "Bs 0";
       document.getElementById('resSub').innerText = monedaActual === 'USD' ? "Equivalente: Bs 0" : "Equivalente: $ 0";
       return;
     }
 
+    // Convertir el monto a financiar a Bolivianos para el cálculo bancario
+    let montoBs = monedaActual === 'USD' ? (montoInput * tc) : montoInput;
+
     const tasaTotal = tasaInteres + SEGURO_DESGRAVAMEN;
     const n = yrs * 12;
     const i = (tasaTotal / 100) / 12;
 
-    const cuotaBase = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+    const cuotaBsCalculada = montoBs * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+    const cuotaBs = Math.round(cuotaBsCalculada);
+    const cuotaUSD = Math.round(cuotaBsCalculada / tc);
 
     if (monedaActual === 'USD') {
-      const cuotaUSD = Math.round(cuotaBase);
-      const cuotaBs = Math.round(cuotaBase * tc);
       document.getElementById('resMain').innerText = "$ " + cuotaUSD.toLocaleString('en-US');
       document.getElementById('resSub').innerText = "Equivalente: Bs " + cuotaBs.toLocaleString('es-BO');
     } else {
-      const cuotaBs = Math.round(cuotaBase);
-      const cuotaUSD = Math.round(cuotaBase / tc);
       document.getElementById('resMain').innerText = "Bs " + cuotaBs.toLocaleString('es-BO');
       document.getElementById('resSub').innerText = "Equivalente: $ " + cuotaUSD.toLocaleString('en-US');
     }
@@ -185,25 +209,40 @@
 
   function copiar() {
     const tc = parseFloat(document.getElementById('tc').value || 6.96);
-    const precioVal = parseFloat(document.getElementById('precio').value || 0);
-    const inicialVal = parseFloat(document.getElementById('inicial').value || 0);
-    const montoVal = parseFloat(document.getElementById('monto').value || 0);
+    const precioInput = parseFloat(document.getElementById('precio').value || 0);
+    const inicialInput = parseFloat(document.getElementById('inicial').value || 0);
+    const montoInput = parseFloat(document.getElementById('monto').value || 0);
     const tasa = document.getElementById('tasa').value;
     const anios = document.getElementById('anios').value;
 
     const resMain = document.getElementById('resMain').innerText;
     const resSub = document.getElementById('resSub').innerText;
 
-    const sim = monedaActual === 'USD' ? '$' : 'Bs';
-    const locale = monedaActual === 'USD' ? 'en-US' : 'es-BO';
+    let precioUSD, precioBs, inicialUSD, inicialBs, montoUSD, montoBs;
 
-    let msg = `🚗 *AUTOSALE MOTORS - FINANCIAMIENTO BANCARIO*\n`;
+    if (monedaActual === 'USD') {
+      precioUSD = precioInput;
+      precioBs = Math.round(precioInput * tc);
+      inicialUSD = inicialInput;
+      inicialBs = Math.round(inicialInput * tc);
+      montoUSD = montoInput;
+      montoBs = Math.round(montoInput * tc);
+    } else {
+      precioBs = precioInput;
+      precioUSD = Math.round(precioInput / tc);
+      inicialBs = inicialInput;
+      inicialUSD = Math.round(inicialInput / tc);
+      montoBs = montoInput;
+      montoUSD = Math.round(montoInput / tc);
+    }
+
+    let msg = `🚗 *AUTOSALE MOTORS - FINANCIAMIENTO BANCARIO*\n\n`;
     msg += `• Tipo de Cambio: Bs ${tc}\n`;
-    msg += `• Precio: ${sim} ${precioVal.toLocaleString(locale)}\n`;
-    msg += `• Cuota Inicial: ${sim} ${inicialVal.toLocaleString(locale)}\n`;
-    msg += `• Monto a Financiar: ${sim} ${montoVal.toLocaleString(locale)}\n`;
+    msg += `• Precio: $ ${precioUSD.toLocaleString('en-US')}  (Bs ${precioBs.toLocaleString('es-BO')})\n`;
+    msg += `• Cuota Inicial: $ ${inicialUSD.toLocaleString('en-US')}  (Bs ${inicialBs.toLocaleString('es-BO')})\n`;
+    msg += `• Monto a Financiar: $ ${montoUSD.toLocaleString('en-US')}  (Bs ${montoBs.toLocaleString('es-BO')})\n`;
     msg += `• Tasa de Interés: ${tasa}%\n`;
-    msg += `• Plazo: ${anios} años\n`;
+    msg += `• Plazo: ${anios} años\n\n`;
     msg += `👉 *Cuota mensual: ${resMain}* (${resSub})`;
 
     if (navigator.clipboard && window.isSecureContext) {
@@ -234,7 +273,7 @@
     document.body.removeChild(textArea);
   }
 
-  // Event Listeners
+  // Event Listeners para actualizar en tiempo real
   document.getElementById('tc').addEventListener('input', calc);
   document.getElementById('precio').addEventListener('input', calc);
   document.getElementById('inicial').addEventListener('input', calc);
