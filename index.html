@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autosale Motors - Cotizador</title>
+  
+  <!-- Icono de la aplicación -->
+  <link rel="icon" href="logo.jpg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #0f172a; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .card { background: #ffffff; width: 100%; max-width: 380px; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
+    
+    .logo-container { margin-bottom: 12px; }
+    .logo-container img { max-width: 200px; height: auto; border-radius: 8px; }
+
+    .field { margin-bottom: 14px; text-align: left; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input { width: 100%; padding: 12px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 16px; font-weight: 600; background: #f9fafb; outline: none; }
+    input:focus { border-color: #dc2626; background: #fff; }
+
+    .chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .chip { padding: 6px 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; font-weight: 600; color: #4b5563; cursor: pointer; }
+    .chip.active { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+    .res-box { background: #10b981; color: #fff; border-radius: 12px; padding: 18px; text-align: center; margin-top: 16px; }
+    .res-title { font-size: 11px; text-transform: uppercase; font-weight: 700; opacity: 0.9; }
+    .res-main { font-size: 34px; font-weight: 800; margin-top: 2px; }
+
+    .btn { width: 100%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; margin-top: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn:active { opacity: 0.9; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-container">
+    <img src="logo.jpg" alt="Autosale Motors">
+  </div>
+
+  <div class="field">
+    <label>Monto a financiar (Bs)</label>
+    <input type="number" id="monto" value="150000" step="1000">
+  </div>
+
+  <div class="field">
+    <label>Tasa Anual (%)</label>
+    <input type="number" id="tasa" value="16" step="0.1">
+    <div class="chips">
+      <span class="chip" onclick="setTasa(11.5, this)">11.5%</span>
+      <span class="chip" onclick="setTasa(12, this)">12%</span>
+      <span class="chip active" onclick="setTasa(16, this)">16%</span>
+      <span class="chip" onclick="setTasa(20, this)">20%</span>
+      <span class="chip" onclick="setTasa(22, this)">22%</span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Plazo (Años)</label>
+    <input type="number" id="anios" value="5" step="1">
+    <div class="chips">
+      <span class="chip active" onclick="setAnios(5, this)">5 Años</span>
+      <span class="chip" onclick="setAnios(7, this)">7 Años</span>
+    </div>
+  </div>
+
+  <div class="res-box">
+    <div class="res-title">Cuota Mensual</div>
+    <div class="res-main" id="resBs">Bs 0</div>
+  </div>
+
+  <button class="btn" onclick="copiar()">📲 Copiar para WhatsApp</button>
+</div>
+
+<script>
+  function setTasa(v, el) {
+    document.getElementById('tasa').value = v;
+    el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    calc();
+  }
+
+  function setAnios(v, el) {
+    document.getElementById('anios').value = v;
+    el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    calc();
+  }
+
+  function calc() {
+    const P = parseFloat(document.getElementById('monto').value) || 0;
+    const tasaInteres = parseFloat(document.getElementById('tasa').value) || 0;
+    const yrs = parseFloat(document.getElementById('anios').value) || 0;
+
+    if (P <= 0 || tasaInteres <= 0 || yrs <= 0) {
+      document.getElementById('resBs').innerText = "Bs 0";
+      return;
+    }
+
+    // Cálculo interno silencioso sumando el 1.55% de seguro desgravamen
+    const tasaTotal = tasaInteres + 2;
+    const n = yrs * 12;
+    const i = (tasaTotal / 100) / 12;
+
+    const cuotaBs = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+    const bsRedondeado = Math.round(cuotaBs);
+
+    document.getElementById('resBs').innerText = "Bs " + bsRedondeado.toLocaleString('es-BO');
+  }
+
+  function copiar() {
+    const bs = document.getElementById('resBs').innerText;
+    const monto = parseFloat(document.getElementById('monto').value || 0).toLocaleString('es-BO');
+    const tasa = document.getElementById('tasa').value;
+    const anios = document.getElementById('anios').value;
+
+    const msg = `🚗 *AUTOSALE MOTORS - COTIZACIÓN*\n• Monto: Bs ${monto}\n• Tasa: ${tasa}%\n• Plazo: ${anios} años\n👉 *Cuota mensual: ${bs}*`;
+
+    navigator.clipboard.writeText(msg).then(() => {
+      alert('¡Copiado para WhatsApp!');
+    }).catch(() => {
+      alert('Cuota: ' + bs);
+    });
+  }
+
+  document.querySelectorAll('input').forEach(inp => inp.addEventListener('input', calc));
+  calc();
+</script>
+
+</body>
+</html>
+
